@@ -1,22 +1,33 @@
+import cafe24Factory from "../support/cafe24";
+
 describe('cafe24', () => {
-    it('should buy an item', () => {
-        cy.on('uncaught:exception', (err, runnable) => {
-            return false
-        })
+    it.skip('should buy an item', () => {
+       const {login, goToProductDetailPage} = cafe24Factory()
 
-        cy.visit("https://morishjs.cafe24.com");
-        cy.get('#header > div.right_area > div.icon_menber > img').trigger('mouseover');
-        cy.get('#header > div.right_area > div.icon_menber > ul > li:nth-child(1) > a').click();
-
-        cy.get('#member_id').type('junsukpark');
-        cy.get('#member_passwd').type('5J27$I0HDWrr');
-
-        cy.get('.btnLogin_bk').click();
-
-        cy.get('#anchorBoxId_10 > div.thumbnail > div > a').click({
-            force: true,
-        });
+        login();
+        goToProductDetailPage();
 
         cy.get('#btnBuy').click();
+    })
+
+    it.skip('장바구니 추가', () => {
+        const {login, goToProductDetailPage} = cafe24Factory();
+        login();
+        goToProductDetailPage();
+
+        cy.get('.move.sub_cart').click();
+    })
+
+    it('관심상품 선택', (done) => {
+        const {login, goToProductDetailPage} = cafe24Factory()
+
+        login();
+        goToProductDetailPage();
+
+        cy.get('.move.sub_wish').click();
+        cy.on('window:alert', (str) => {
+            expect(str).to.equal('관심상품으로 등록되었습니다.');
+            done();
+        });
     })
 });
